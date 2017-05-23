@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width"/>
+<title>Kakao사용자 in nodejs - Use REST API</title>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<style>
+div { display: none; }
+</style>
+</head>
+<body>
+
+<div id="loginBt"><a href="https://kauth.kakao.com/oauth/authorize?client_id={{restApiKey}}&redirect_uri=http://localhost/kakaoAuth&response_type=code">로그인</a></div>
+<div id="logoutBt"><a href="/kakaoLogout">로그아웃</a></div>
+<div id="getUserInfo"><a href="javascript:getUserInfo();">사용자정보</a></div>
+<div id="setUserInfo"><a href="javascript:setUserInfo();">닉네임변경</a> <input type="text" name="nickname" /></div>
+<div id="getUserIdList"><a href="javascript:getUserIdList();">리스트</a></div>
+<div id="tokenInfo"><a href="javascript:tokenInfo();">토큰 유효성 검사 및 정보 얻기</a></div>
+<div id="agreeDynamically"><a href="https://kauth.kakao.com/oauth/authorize?client_id={{restApiKey}}&redirect_uri=http://localhost/kakaoAuth&response_type=code&scope=talk_message">동적동의</a></div>
+
+<script type='text/javascript'>
+$(document).ready(function() { $.get("/userInfo",function(d) { btStatus(d.id?true:false); }); });
+var getUserInfo = function() { $.get("/userInfo",function(d) { console.log(d); }); };
+var setUserInfo = function() { $.get("/userInfoUpdate?nickname="+encodeURI($("input[name='nickname']").val()), function(d) { console.log(d); }); };
+var getUserIdList = function() { $.get("/userIdList",function(data) { console.log(data.elements); }); };
+var tokenInfo = function() { $.get("/tokenInfo",function(data) { console.log(data); }); };
+var btStatus = function(flag) {
+  if(flag) {
+    $("#loginBt").css("display", "none");
+    $("#logoutBt").css("display", "block");
+    $("#getUserInfo").css("display", "block");
+    $("#setUserInfo").css("display", "block");
+    $("#getUserIdList").css("display", "block");
+    $("#tokenInfo").css("display", "block");
+    $("#agreeDynamically").css("display", "block");
+  } else {
+    $("#loginBt").css("display", "block");
+    $("#logoutBt").css("display", "none");
+    $("#getUserInfo").css("display", "none");
+    $("#setUserInfo").css("display", "none");
+    $("#getUserIdList").css("display", "none");
+    $("#tokenInfo").css("display", "none");
+    $("#agreeDynamically").css("display", "none");
+  }
+};
+</script>
+
+</body>
+</html>

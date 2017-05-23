@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width"/>
+<title>Kakao사용자 in nodejs - JavaScript SDK</title>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="http://developers.kakao.com/sdk/js/kakao.min.js"></script>
+<style>
+div { display: none; }
+</style>
+</head>
+<body>
+
+<div id="loginBt"><a id="kakao-login-btn"></a></div>
+<div id="logoutBt"><a href="javascript:logOut();">로그아웃</a></div>
+<div id="appUnlink"><a href="javascript:useApi('/v1/user/unlink');">앱 연결 해제</a></div>
+<div id="getUserInfo"><a href="javascript:useApi('/v1/user/me');">사용자 정보 요청</a></div>
+<div id="setUserInfo"><a href="javascript:useApi('/v1/user/update_profile', true);">사용자 정보 저장</a> <input type="text" name="nickname" /></div>
+<div id="tokenInfo"><a href="javascript:useApi('/v1/user/access_token_info');">토큰 유효성 검사 및 정보 얻기</a></div>
+
+<script type='text/javascript'>
+  $(document).ready(function() {
+  	Kakao.init('{{javascriptKey}}');
+    Kakao.Auth.createLoginButton({
+      container: '#kakao-login-btn',
+      persistRefreshToken : true,
+      success: function(authObj) { btStatus(true); console.log(authObj); },
+      fail: function(err) { console.log(JSON.stringify(err)); }
+    });
+    loginChk();
+  });
+  var loginChk = function() { Kakao.Auth.getStatus(function(data) { btStatus("connected" == data.status); }); };
+  var logOut = function() { Kakao.Auth.logout(function(){ btStatus(false); }); };
+  var useApi = function(url, dataFlag) { Kakao.API.request({url:url, data:(dataFlag?{properties:{nickname:$("input[name='nickname']").val()}}:undefined)}).then(function(res) { console.log(res); }); };
+  var btStatus = function(flag) {
+    if(flag) {
+      $("#loginBt").css("display", "none");
+      $("#logoutBt").css("display", "block");
+      $("#appUnlink").css("display", "block");
+      $("#getUserInfo").css("display", "block");
+      $("#setUserInfo").css("display", "block");
+      $("#tokenInfo").css("display", "block");
+    } else {
+      $("#loginBt").css("display", "block");
+      $("#logoutBt").css("display", "none");
+      $("#appUnlink").css("display", "none");
+      $("#getUserInfo").css("display", "none");
+      $("#setUserInfo").css("display", "none");
+      $("#tokenInfo").css("display", "none");
+    }
+  };
+</script>
+</body>
+</html>
